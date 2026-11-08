@@ -14,19 +14,32 @@ $user_id=$_SESSION['user_id'];
 
 if(isset($_POST['update']))
 {
-    $first_name=mysqli_real_escape_string($conn,$_POST['first_name']);
-    $last_name=mysqli_real_escape_string($conn,$_POST['last_name']);
-    $email=mysqli_real_escape_string($conn,$_POST['email']);
-
-    mysqli_query($conn,"
-    UPDATE users
-    SET
-    first_name='$first_name',
-    last_name='$last_name',
-    email='$email'
-    WHERE user_id='$user_id'
-    ");
-
+    $first_name=mysqli_real_escape_string($conn,trim($_POST['first_name']));
+    $last_name=mysqli_real_escape_string($conn,trim($_POST['last_name']));
+    $email=mysqli_real_escape_string($conn,trim($_POST['email']));
+    $updateError="";
+    if($first_name==="" || $last_name==="" || $email==="")
+    {
+        $updateError="First name, last name and email are required.";
+    }
+    else
+    {
+        $dup=mysqli_query($conn,"SELECT user_id FROM users WHERE email='$email' AND user_id<>'$user_id' LIMIT 1");
+        if($dup && mysqli_num_rows($dup)>0)
+        {
+            $updateError="That email is already used by another account.";
+        }
+        else
+        {
+            $ok=mysqli_query($conn,"UPDATE users SET first_name='$first_name', last_name='$last_name', email='$email' WHERE user_id='$user_id'");
+            if(!$ok)
+            {
+                $updateError="Could not save your changes. Please try again.";
+            }
+        }
+    }
+    if($updateError==="")
+    {
     if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] === 0) {
         $ext = strtolower(pathinfo($_FILES['profile_picture']['name'], PATHINFO_EXTENSION));
         $allowed = ['jpg','jpeg','png'];
@@ -49,6 +62,7 @@ if(isset($_POST['update']))
 
     header("Location: profile.php?updated=1");
     exit();
+    }
 }
 
 $user=mysqli_fetch_assoc(mysqli_query($conn,"
@@ -137,6 +151,9 @@ My Profile
 
 <div class="card-body">
 
+<?php if(!empty($updateError)){ ?>
+<div class="alert alert-danger"><?php echo htmlspecialchars($updateError); ?></div>
+<?php } ?>
 <?php if(isset($_GET['updated'])){ ?>
 
 <div class="alert alert-success">

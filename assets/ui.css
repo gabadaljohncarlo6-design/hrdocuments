@@ -56,12 +56,12 @@ h4{font-size:1.02rem !important;} h5{font-size:.92rem !important;} h6{font-size:
 .nav-pills .nav-link,.nav-tabs .nav-link{font-size:.82rem;padding:.35rem .8rem;}
 .modal-title{font-size:1rem;}
 /* wide sidebars (270px pages) -> compact 210px */
-.sidebar .logo-area img,.sidebar .logo{width:60px !important;}
-.sidebar .logo-area h2{font-size:1.05rem !important;}
-.sidebar .logo-area p{font-size:.7rem !important;margin-bottom:12px !important;}
+.sidebar .logo-area img,.sidebar .logo{width:44px !important;}
+.sidebar .logo-area h2{font-size:12px !important;}
+.sidebar .logo-area p{font-size:10px !important;margin-bottom:6px !important;}
 .sidebar .menu{padding-left:0;list-style:none;}
-.sidebar .menu a{font-size:.8rem !important;padding:8px 12px !important;gap:10px !important;}
-.sidebar .menu i{font-size:.95rem !important;}
+.sidebar .menu a{font-size:10.5px !important;padding:9px 4px !important;gap:4px !important;}
+.sidebar .menu i{font-size:18px !important;}
 /* scrollbars */
 ::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:#b9c8e6;border-radius:8px}
-.sidebar .logo{height:60px !important;}
+.sidebar .logo{height:44px !important;}

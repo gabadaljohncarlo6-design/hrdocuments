@@ -63,11 +63,11 @@ body{
 
 .main-content{
 
-    margin-left:210px;
+    margin-left:110px;
 
     padding:30px 40px;
 
-    width:calc(100% - 210px);
+    width:calc(100% - 110px);
 
 }
 

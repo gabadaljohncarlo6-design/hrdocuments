@@ -369,4 +369,18 @@ body{
 
 }
 
+
+/* ===== slim sidebar (same look as HR staff) ===== */
+.sidebar{width:110px !important;padding:16px 8px !important;overflow-x:hidden;z-index:999;}
+.logo-area .logo{width:44px !important;height:44px !important;margin-bottom:6px !important;}
+.logo-area h2{font-size:12px !important;line-height:1.2;margin-bottom:2px !important;}
+.logo-area p{font-size:10px !important;line-height:1.2 !important;margin-bottom:6px !important;}
+.sidebar hr{margin:10px 0 !important;}
+.menu li{margin-bottom:6px !important;}
+.menu a{flex-direction:column !important;justify-content:center;text-align:center;gap:4px !important;padding:9px 4px !important;border-radius:12px !important;font-size:10.5px !important;line-height:1.2;}
+.menu a i{font-size:18px !important;width:auto !important;}
+.menu a:hover{transform:none !important;}
+.logout-area{margin-top:10px !important;}
+.logout-btn{flex-direction:column;gap:3px !important;padding:9px 4px !important;font-size:10.5px !important;border-radius:12px !important;}
+.logout-btn i{font-size:18px;}
 </style>
