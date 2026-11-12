@@ -434,7 +434,7 @@ echo date("M d, Y",strtotime($doc['submitted_at']));
 
 <a
 
-href="../<?php echo $doc['file_path']; ?>"
+href="<?php echo htmlspecialchars($doc['file_path']); ?>"
 
 target="_blank"
 

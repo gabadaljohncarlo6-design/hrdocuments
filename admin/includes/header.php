@@ -297,7 +297,7 @@ text-align:center;
 
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<link rel="stylesheet" href="../../assets/ui.css">
+<link rel="stylesheet" href="../assets/ui.css">
 </head>
 
 <body>

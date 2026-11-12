@@ -65,3 +65,12 @@ h4{font-size:1.02rem !important;} h5{font-size:.92rem !important;} h6{font-size:
 /* scrollbars */
 ::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:#b9c8e6;border-radius:8px}
 .sidebar .logo{height:44px !important;}
+
+/* ===== admin pages: extra compact ===== */
+.container-fluid h1.fw-bold{font-size:1.3rem !important;margin-bottom:.8rem !important;}
+.container-fluid h2.fw-bold{font-size:1.2rem !important;}
+.container-fluid .row.g-4{--bs-gutter-x:.9rem;--bs-gutter-y:.9rem;}
+.container-fluid .mb-4{margin-bottom:1rem !important;}
+.fs-3{font-size:1.1rem !important;}.fs-4{font-size:1rem !important;}
+.table-responsive{font-size:.84rem;}
+.btn-outline-primary.btn-sm{padding:.2rem .45rem;}

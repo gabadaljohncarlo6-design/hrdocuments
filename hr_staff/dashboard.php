@@ -336,7 +336,7 @@ color:#0A2E73;
 
 <div class="sidebar">
 
-    <img src="../images/isatu_logo.png">
+    <a href="dashboard.php" title="Go to Dashboard" style="padding:0;margin:0 auto 4px;background:none;display:block;width:fit-content;text-decoration:none;"><img src="../images/isatu_logo.png"></a>
 
     <h3>ISAT U HRMS</h3>
 

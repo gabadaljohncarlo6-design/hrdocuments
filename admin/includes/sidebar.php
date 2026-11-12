@@ -2,7 +2,7 @@
 
     <div class="logo-area">
 
-        <img src="../images/isatu_logo.png" class="logo">
+        <a href="../admin/dashboard.php" title="Go to Dashboard" style="padding:0;margin:0 auto 4px;background:none;display:block;width:fit-content;text-decoration:none;"><img src="../images/isatu_logo.png" class="logo"></a>
 
         <h2>ISAT U</h2>
 
