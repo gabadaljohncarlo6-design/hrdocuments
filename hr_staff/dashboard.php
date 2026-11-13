@@ -423,9 +423,7 @@ else{
         </div>
     </div>
 
-    <img
-    src="../images/isatu_logo.png"
-    width="55">
+    <?php require_once __DIR__ . '/../includes/avatar.php'; echo topbar_avatar($conn); ?>
 
     </div>
 
@@ -433,36 +431,29 @@ else{
 
 <div class="stats">
 
-<div class="stat-card">
-
+<div class="stat-card stat-click" onclick="statFilter('')" role="button" title="Show all documents">
 <h5>Total Documents</h5>
-
 <h2 class="text-blue"><?php echo $totalDocuments; ?></h2>
-
 </div>
 
-<div class="stat-card">
+<div class="stat-card stat-click" onclick="statFilter('Pending')" role="button" title="Show pending documents">
+<h5>Pending</h5>
+<h2 style="color:#fd7e14;"><?php echo $totalPending; ?></h2>
+</div>
 
+<div class="stat-card stat-click" onclick="statFilter('Approved')" role="button" title="Show approved documents">
 <h5>Approved</h5>
-
 <h2 class="text-green"><?php echo $totalApproved; ?></h2>
-
 </div>
 
-<div class="stat-card">
-
+<div class="stat-card stat-click" onclick="statFilter('Rejected')" role="button" title="Show rejected documents">
 <h5>Rejected</h5>
-
 <h2 class="text-red"><?php echo $totalRejected; ?></h2>
-
 </div>
 
-<div class="stat-card">
-
+<div class="stat-card stat-click" onclick="statFilter('Returned')" role="button" title="Show returned documents">
 <h5>Returned</h5>
-
 <h2 class="text-yellow"><?php echo $totalReturned; ?></h2>
-
 </div>
 
 </div>
@@ -961,6 +952,12 @@ row.style.display=
 searchInput.addEventListener("keyup",filterTable);
 categoryFilter.addEventListener("change",filterTable);
 statusFilter.addEventListener("change",filterTable);
+
+function statFilter(v){
+    statusFilter.value=v;
+    filterTable();
+    statusFilter.scrollIntoView({behavior:"smooth",block:"center"});
+}
 dateFilter.addEventListener("change",filterTable);
 
 </script>

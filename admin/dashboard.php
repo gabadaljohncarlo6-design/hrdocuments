@@ -65,12 +65,12 @@ include "includes/sidebar.php";
 Dashboard
 
 </h1>
-<div class="row g-4 mb-4">
+<div class="row g-3 mb-3 flex-nowrap stat-row">
 
 <!-- Registered Users -->
 <!-- Registered Users -->
-<div class="col-xl-3 col-md-6">
-    <div class="card border-0 shadow-sm h-100">
+<div class="col">
+    <a href="users.php" class="card border-0 shadow-sm h-100 stat-link text-decoration-none">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
@@ -82,12 +82,12 @@ Dashboard
                 </div>
             </div>
         </div>
-    </div>
+    </a>
 </div>
 
 <!-- Faculty Users -->
-<div class="col-xl-3 col-md-6">
-    <div class="card border-0 shadow-sm h-100">
+<div class="col">
+    <a href="users.php?search=faculty" class="card border-0 shadow-sm h-100 stat-link text-decoration-none">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
@@ -99,12 +99,12 @@ Dashboard
                 </div>
             </div>
         </div>
-    </div>
+    </a>
 </div>
 
 <!-- HR Users -->
-<div class="col-xl-3 col-md-6">
-    <div class="card border-0 shadow-sm h-100">
+<div class="col">
+    <a href="users.php?search=hr" class="card border-0 shadow-sm h-100 stat-link text-decoration-none">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
@@ -116,12 +116,12 @@ Dashboard
                 </div>
             </div>
         </div>
-    </div>
+    </a>
 </div>
 
 <!-- Documents -->
-<div class="col-xl-3 col-md-6">
-    <div class="card border-0 shadow-sm h-100">
+<div class="col">
+    <a href="documents.php" class="card border-0 shadow-sm h-100 stat-link text-decoration-none">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
@@ -133,14 +133,14 @@ Dashboard
                 </div>
             </div>
         </div>
-    </div>
+    </a>
 </div>
 
 <!-- Pending -->
 
-<div class="col-xl-3 col-md-6">
+<div class="col">
 
-<div class="card border-0 shadow-sm h-100">
+<a href="documents.php?status=Pending" class="card border-0 shadow-sm h-100 stat-link text-decoration-none">
 
 <div class="card-body">
 
@@ -172,15 +172,15 @@ Pending
 
 </div>
 
-</div>
+</a>
 
 </div>
 
 <!-- Approved -->
 
-<div class="col-xl-3 col-md-6">
+<div class="col">
 
-<div class="card border-0 shadow-sm h-100">
+<a href="documents.php?status=Approved" class="card border-0 shadow-sm h-100 stat-link text-decoration-none">
 
 <div class="card-body">
 
@@ -212,7 +212,7 @@ Approved
 
 </div>
 
-</div>
+</a>
 
 </div>
 

@@ -156,6 +156,12 @@ Upload New
 <tbody>
 <?php
 
+$statusSql="";
+if(isset($_GET['status']) && in_array($_GET['status'],['Pending','Approved','Rejected','Returned'],true))
+{
+    $statusSql=" AND documents.status='".$_GET['status']."'";
+}
+
 $query=mysqli_query($conn,"
 SELECT
 documents.*,
@@ -163,7 +169,7 @@ document_categories.category_name
 FROM documents
 LEFT JOIN document_categories
 ON documents.category_id=document_categories.category_id
-WHERE documents.user_id='$user_id'
+WHERE documents.user_id='$user_id' $statusSql
 ORDER BY documents.document_id DESC
 ");
 

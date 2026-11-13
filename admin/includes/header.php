@@ -334,7 +334,7 @@ text-align:center;
 
 <div class="admin-info">
 
-<img src="../images/isatu_logo.png">
+<?php require_once __DIR__ . '/../../includes/avatar.php'; echo topbar_avatar($conn); ?>
 
 <span>
 
