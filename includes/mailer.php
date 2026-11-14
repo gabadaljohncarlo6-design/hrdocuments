@@ -174,6 +174,7 @@ function send_notification_email($conn, $toEmail, $toName, $subject, $htmlBody)
     $settings = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM system_settings LIMIT 1"));
 
     if (!$settings || empty($settings['smtp_username']) || empty($settings['smtp_app_password'])) {
+        $GLOBALS['mail_last_error'] = "SMTP not configured in system_settings.";
         error_log("Email not sent: SMTP not configured in system_settings.");
         return false;
     }
@@ -182,10 +183,11 @@ function send_notification_email($conn, $toEmail, $toName, $subject, $htmlBody)
         $settings['smtp_host'] ?: 'smtp.gmail.com',
         $settings['smtp_port'] ?: 587,
         $settings['smtp_username'],
-        $settings['smtp_app_password']
+        str_replace(' ', '', $settings['smtp_app_password'])
     );
 
     if (!$mailer->connect()) {
+        $GLOBALS['mail_last_error'] = $mailer->getLastError();
         error_log("Email connect failed: " . $mailer->getLastError());
         return false;
     }
@@ -193,6 +195,7 @@ function send_notification_email($conn, $toEmail, $toName, $subject, $htmlBody)
     $result = $mailer->send($toEmail, $toName, $subject, $htmlBody);
 
     if (!$result) {
+        $GLOBALS['mail_last_error'] = $mailer->getLastError();
         error_log("Email send failed to $toEmail: " . $mailer->getLastError());
     }
 

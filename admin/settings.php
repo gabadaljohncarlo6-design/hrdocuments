@@ -93,7 +93,7 @@ if (isset($_POST['send_test_email'])) {
 
         $message = $sent
             ? "<div class='alert alert-success'>Test email sent successfully to {$settings['smtp_username']}. Check the inbox.</div>"
-            : "<div class='alert alert-danger'>Test email failed to send. Double check the Gmail address and App Password (must be a 16-character App Password, not your normal Gmail password).</div>";
+            : "<div class='alert alert-danger'>Test email failed to send. Double check the Gmail address and App Password (must be a 16-character App Password, not your normal Gmail password).<br><small><b>Reason:</b> " . htmlspecialchars($GLOBALS['mail_last_error'] ?? 'Unknown error') . "</small></div>";
     }
 }
 ?>
