@@ -322,7 +322,9 @@ text-align:center;
 
 </div>
 
-<div class="dropdown me-3">
+<div class="d-flex align-items-center gap-3">
+
+<div class="dropdown">
     <button class="btn position-relative" id="notifBell" data-bs-toggle="dropdown" style="border:none;background:none;">
         <i class="bi bi-bell-fill fs-4" style="color:#0A2E73;"></i>
         <span id="notifBadge" class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle" style="display:none;font-size:10px;">0</span>
@@ -341,6 +343,8 @@ text-align:center;
 Administrator
 
 </span>
+
+</div>
 
 </div>
 
@@ -382,7 +386,7 @@ function loadNotifications(){
 }
 
 function markNotifRead(id){
-    fetch('../mark_notifications_read.php?id=' + id).then(() => loadNotifications());
+    fetch('../mark_notifications.php?id=' + id).then(() => loadNotifications());
 }
 
 document.getElementById('notifBell').addEventListener('click', loadNotifications);

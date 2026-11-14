@@ -100,5 +100,6 @@ body{min-height:100vh;display:flex;align-items:center;justify-content:center;bac
 
 <a href="login.php" class="back-link"><i class="bi bi-arrow-left"></i> Back to Login</a>
 </div>
+<script src="assets/password-toggle.js"></script>
 </body>
 </html>s

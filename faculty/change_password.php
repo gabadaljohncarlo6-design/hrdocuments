@@ -146,5 +146,6 @@ body{background:#eef3fb;}
 
 </div>
 
+<script src="../assets/password-toggle.js"></script>
 </body>
 </html>

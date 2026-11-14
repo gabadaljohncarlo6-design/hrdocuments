@@ -312,6 +312,7 @@ Save User
 
 </div>
 
+<script src="../assets/password-toggle.js"></script>
 </body>
 
 </html>

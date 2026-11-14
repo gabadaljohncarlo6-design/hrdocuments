@@ -1000,7 +1000,7 @@ function loadNotifications(){
 }
 
 function markNotifRead(id){
-    fetch('../mark_notifications_read.php?id=' + id).then(() => loadNotifications());
+    fetch('../mark_notifications.php?id=' + id).then(() => loadNotifications());
 }
 
 document.getElementById('notifBell').addEventListener('click', loadNotifications);
