@@ -323,7 +323,6 @@ text-align:center;
 </div>
 
 <div class="d-flex align-items-center gap-3">
-
 <div class="dropdown">
     <button class="btn position-relative" id="notifBell" data-bs-toggle="dropdown" style="border:none;background:none;">
         <i class="bi bi-bell-fill fs-4" style="color:#0A2E73;"></i>
@@ -345,7 +344,6 @@ Administrator
 </span>
 
 </div>
-
 </div>
 
 </div>
@@ -357,39 +355,11 @@ function escapeHtml(str){
     return d.innerHTML;
 }
 
-function loadNotifications(){
-    fetch('../notifications_ajax.php')
-        .then(r => r.json())
-        .then(data => {
-            const badge = document.getElementById('notifBadge');
-            if (data.unread_count > 0) {
-                badge.style.display = 'inline-block';
-                badge.textContent = data.unread_count > 9 ? '9+' : data.unread_count;
-            } else {
-                badge.style.display = 'none';
-            }
-
-            const dropdown = document.getElementById('notifDropdown');
-            if (!data.notifications || data.notifications.length === 0) {
-                dropdown.innerHTML = '<div class="p-3 text-center text-muted">No notifications yet.</div>';
-                return;
-            }
-
-            dropdown.innerHTML = data.notifications.map(n => `
-                <a href="#" class="dropdown-item ${n.is_read ? '' : 'bg-light'} py-2 border-bottom" onclick="markNotifRead(${n.id}); return false;">
-                    <div style="font-size:13px;white-space:normal;">${escapeHtml(n.message)}</div>
-                    <small class="text-muted">${n.time}</small>
-                </a>
-            `).join('');
-        })
-        .catch(() => {});
+window.notifLink = notifLink;
+function notifLink(type){
+    if (type === 'new_user') return 'users.php';
+    if (type === 'new_document' || type === 'status_update') return 'documents.php';
+    return '';
 }
-
-function markNotifRead(id){
-    fetch('../mark_notifications.php?id=' + id).then(() => loadNotifications());
-}
-
-document.getElementById('notifBell').addEventListener('click', loadNotifications);
-loadNotifications();
-setInterval(loadNotifications, 30000);
 </script>
+<script src="../assets/notifications.js"></script>

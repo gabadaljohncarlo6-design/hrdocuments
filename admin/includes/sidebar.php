@@ -42,6 +42,13 @@
         </li>
 
         <li>
+            <a href="../admin/templates.php">
+                <i class="bi bi-file-earmark-arrow-down-fill"></i>
+                <span>Template</span>
+            </a>
+        </li>
+
+        <li>
             <a href="../admin/users.php">
                 <i class="bi bi-people-fill"></i>
                 <span>Manage Users</span>
@@ -80,13 +87,6 @@
             <a href="print_report.php" target="_blank">
                 <i class="bi bi-printer-fill"></i>
                 <span>Print Report</span>
-            </a>
-        </li>
-
-        <li>
-            <a href="export_pdf.php" target="_blank">
-                <i class="bi bi-file-earmark-pdf-fill"></i>
-                <span>Export PDF</span>
             </a>
         </li>
 

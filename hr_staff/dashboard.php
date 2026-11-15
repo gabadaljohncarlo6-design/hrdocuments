@@ -10,6 +10,8 @@ if(!isset($_SESSION['user_id']))
 
 include "../db.php";
 include "../includes/mailer.php";
+include "../includes/reminders.php";
+process_due_reminders($conn);
 
 date_default_timezone_set("Asia/Manila");
 
@@ -81,6 +83,9 @@ if(isset($_POST['update']))
         'status_update'
     )
     ");
+
+    require_once __DIR__ . '/../includes/notify_admins.php';
+    notify_admins($conn, "HR marked " . $doc['first_name'] . " " . $doc['last_name'] . "'s document '" . $doc['document_title'] . "' as " . $status, 'status_update');
 
     if (!empty($doc['email'])) {
         $statusColor = "#0A2E73";
@@ -360,6 +365,7 @@ color:#0A2E73;
         <i class="bi bi-folder-symlink-fill"></i>
         File Repository
     </a>
+<a href="templates.php"><i class="bi bi-file-earmark-arrow-down-fill"></i> Template</a>
 
     <a href="reports.php">
         <i class="bi bi-bar-chart-fill"></i>
@@ -371,10 +377,6 @@ color:#0A2E73;
         My Profile
     </a>
 
-    <a href="change_password.php">
-        <i class="bi bi-key-fill"></i>
-        Change Password
-    </a>
 
     <a href="../logout.php" onclick="return confirm('Are you sure you want to log out?')">
         <i class="bi bi-box-arrow-right"></i>
@@ -762,99 +764,7 @@ $st=$row['status'];
 
 </div>
 
-<div class="chart-card">
-
-<h4>
-
-Documents by Category
-
-</h4>
-
-<canvas id="categoryChart"></canvas>
-
-</div>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<?php
-
-$chart=mysqli_query($conn,"
-SELECT
-document_categories.category_name,
-COUNT(*) total
-FROM documents
-LEFT JOIN document_categories
-ON document_categories.category_id=documents.category_id
-GROUP BY document_categories.category_name
-");
-
-$categoryLabels=[];
-$categoryCounts=[];
-
-while($c=mysqli_fetch_assoc($chart))
-{
-    $categoryLabels[]=$c['category_name'];
-    $categoryCounts[]=$c['total'];
-}
-
-?>
-
 <script>
-
-const ctx=document.getElementById("categoryChart");
-
-if(ctx){
-
-new Chart(ctx,{
-
-type:"bar",
-
-data:{
-
-labels:<?php echo json_encode($categoryLabels); ?>,
-
-datasets:[{
-
-label:"Documents",
-
-data:<?php echo json_encode($categoryCounts); ?>,
-
-backgroundColor:"#0d6efd",
-
-borderRadius:8
-
-}]
-
-},
-
-options:{
-
-responsive:true,
-
-plugins:{
-
-legend:{
-
-display:false
-
-}
-
-},
-
-scales:{
-
-y:{
-
-beginAtZero:true
-
-}
-
-}
-
-}
-
-});
-
-}
 
 const searchInput=document.getElementById("searchInput");
 const categoryFilter=document.getElementById("categoryFilter");
@@ -971,42 +881,8 @@ function escapeHtml(str){
     return d.innerHTML;
 }
 
-function loadNotifications(){
-    fetch('../notifications_ajax.php')
-        .then(r => r.json())
-        .then(data => {
-            const badge = document.getElementById('notifBadge');
-            if (data.unread_count > 0) {
-                badge.style.display = 'inline-block';
-                badge.textContent = data.unread_count > 9 ? '9+' : data.unread_count;
-            } else {
-                badge.style.display = 'none';
-            }
-
-            const dropdown = document.getElementById('notifDropdown');
-            if (!data.notifications || data.notifications.length === 0) {
-                dropdown.innerHTML = '<div class="p-3 text-center text-muted">No notifications yet.</div>';
-                return;
-            }
-
-            dropdown.innerHTML = data.notifications.map(n => `
-                <a href="#" class="dropdown-item ${n.is_read ? '' : 'bg-light'} py-2 border-bottom" onclick="markNotifRead(${n.id}); return false;">
-                    <div style="font-size:13px;white-space:normal;">${escapeHtml(n.message)}</div>
-                    <small class="text-muted">${n.time}</small>
-                </a>
-            `).join('');
-        })
-        .catch(() => {});
-}
-
-function markNotifRead(id){
-    fetch('../mark_notifications.php?id=' + id).then(() => loadNotifications());
-}
-
-document.getElementById('notifBell').addEventListener('click', loadNotifications);
-loadNotifications();
-setInterval(loadNotifications, 30000);
 </script>
+<script src="../assets/notifications.js"></script>
 
 </body>
 

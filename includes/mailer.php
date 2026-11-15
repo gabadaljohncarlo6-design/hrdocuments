@@ -108,6 +108,14 @@ class SimpleMailer
         return true;
     }
 
+    private static function copyrightFooter()
+    {
+        return "<hr style='border:none;border-top:1px solid #dddddd;margin:24px 0 12px;'>"
+             . "<p style='font-size:12px;color:#777777;text-align:center;margin:0;font-family:Arial,sans-serif;'>"
+             . "&copy; " . date('Y') . " ISAT U HR Document Management System. All rights reserved.<br>"
+             . "Iloilo Science and Technology University - Miagao Campus</p>";
+    }
+
     public function send($toEmail, $toName, $subject, $htmlBody)
     {
         if (!$this->socket) {
@@ -141,7 +149,7 @@ class SimpleMailer
         $headers .= "\r\n";
 
         // Escape lines starting with a lone "." per SMTP spec
-        $body = preg_replace('/^\./m', '..', $htmlBody);
+        $body = preg_replace('/^\./m', '..', $htmlBody . self::copyrightFooter());
 
         $resp = $this->command($headers . $body . "\r\n.");
         if (strpos($resp, '250') !== 0) {

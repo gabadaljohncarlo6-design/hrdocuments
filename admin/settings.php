@@ -130,7 +130,7 @@ top:0;
 left:0;
 width:110px;
 height:100vh;
-background:linear-gradient(180deg,#0A2E73,#123c92);
+background:linear-gradient(180deg,#5b92e5,#2a63bd);
 padding:16px 8px;
 overflow-y:auto;
 overflow-x:hidden;
@@ -242,6 +242,7 @@ border-bottom:2px solid #eef3fb;
 
 <a href="users.php"><i class="bi bi-people-fill"></i>Manage Users</a>
 <a href="repository.php"><i class="bi bi-folder-symlink-fill"></i>File Repository</a>
+<a href="templates.php"><i class="bi bi-file-earmark-arrow-down-fill"></i> Template</a>
 
 <a href="activity_logs.php"><i class="bi bi-clock-history"></i>Activity Logs</a>
 

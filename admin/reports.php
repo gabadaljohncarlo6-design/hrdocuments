@@ -256,9 +256,7 @@ Monthly Uploads
 <i class="bi bi-printer-fill"></i> Print Report
 </a>
 
-<a href="export_pdf.php" target="_blank" class="btn btn-success">
-<i class="bi bi-file-earmark-pdf-fill"></i> Export PDF
-</a>
+
 
 </div>
 

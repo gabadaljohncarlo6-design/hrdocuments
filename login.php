@@ -6,6 +6,11 @@ include 'includes/login_verification.php';
 
 $message = "";
 
+if(isset($_GET['inactive']))
+{
+    $message="<div class='alert alert-danger'>Your account has been deactivated. Please contact the HR office or administrator.</div>";
+}
+
 if(isset($_POST['login']))
 {
     $email = mysqli_real_escape_string($conn,$_POST['email']);
@@ -17,16 +22,21 @@ if(isset($_POST['login']))
     {
         $row = mysqli_fetch_assoc($query);
 
-        if(password_verify($password,$row['password']))
+        if(strtolower(trim($row['status'] ?? 'active'))==='inactive' && password_verify($password,$row['password']))
+        {
+            $message="<div class='alert alert-danger'>Your account has been deactivated. Please contact the HR office or administrator.</div>";
+        }
+        elseif(password_verify($password,$row['password']))
         {
             // Faculty must confirm via an emailed code before logging in
-            if($row['role']=="faculty" && lv_start($conn,$row))
+            $needOtp = (!defined('LOGIN_OTP_ENABLED') || LOGIN_OTP_ENABLED) && $row['role']=="faculty";
+            if($needOtp && lv_start($conn,$row))
             {
                 $_SESSION['pending_verify_user_id'] = $row['user_id'];
                 header("Location: verify_login.php");
                 exit();
             }
-            elseif($row['role']=="faculty")
+            elseif($needOtp)
             {
                 $message="<div class='alert alert-danger'>We could not send the verification email. Please try again later or contact the HR office.</div>";
             }
@@ -413,8 +423,6 @@ max-width:480px;
 
 <div class="left-content">
 
-<span class="eyebrow"><i class="bi bi-stars"></i> Human Resource Document Management</span>
-
 <h1>
 Welcome to
 </h1>
@@ -424,10 +432,6 @@ ISAT U HR Document Management System
 </h2>
 
 <p>
-
-Secure • Efficient • Paperless
-
-<br><br>
 
 Manage HR documents digitally with a modern, secure and reliable
 system designed for the Human Resource Office of

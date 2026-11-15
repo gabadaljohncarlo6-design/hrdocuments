@@ -10,5 +10,5 @@ $conn = mysqli_connect(
 if(!$conn){
     die("Database Connection Failed");
 }
-
+include __DIR__ . "/includes/session_guard.php";
 ?>

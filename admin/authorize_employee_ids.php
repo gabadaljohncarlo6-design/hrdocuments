@@ -86,7 +86,7 @@ ORDER BY a.added_at DESC
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
 body{background:#eef3fb;overflow-x:hidden;}
-.sidebar{position:fixed;top:0;left:0;width:110px;height:100vh;background:linear-gradient(180deg,#0A2E73,#123c92);padding:16px 8px;overflow-y:auto;overflow-x:hidden;z-index:999;}
+.sidebar{position:fixed;top:0;left:0;width:110px;height:100vh;background:linear-gradient(180deg,#5b92e5,#2a63bd);padding:16px 8px;overflow-y:auto;overflow-x:hidden;z-index:999;}
 .sidebar img{width:44px;display:block;margin:auto;}
 .sidebar h3{color:#fff;text-align:center;margin-top:8px;font-weight:700;font-size:12px;line-height:1.2;}
 .sidebar p{color:#ddd;text-align:center;margin-bottom:18px;font-size:10px;}
@@ -113,6 +113,7 @@ body{background:#eef3fb;overflow-x:hidden;}
 <a href="dashboard.php"><i class="bi bi-speedometer2"></i>Dashboard</a>
 <a href="users.php"><i class="bi bi-people-fill"></i>Manage Users</a>
 <a href="repository.php"><i class="bi bi-folder-symlink-fill"></i>File Repository</a>
+<a href="templates.php"><i class="bi bi-file-earmark-arrow-down-fill"></i> Template</a>
 <a href="authorize_employee_ids.php" class="active"><i class="bi bi-shield-check"></i>Authorize IDs</a>
 <a href="activity_logs.php"><i class="bi bi-clock-history"></i>Activity Logs</a>
 <a href="reports.php"><i class="bi bi-bar-chart-fill"></i>Reports</a>

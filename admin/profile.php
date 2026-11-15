@@ -145,6 +145,8 @@ color:black;
 
 <div class="card p-4">
 
+<a href="dashboard.php" class="btn btn-secondary mb-3"><i class="bi bi-arrow-left"></i> Back</a>
+
 <div class="text-center">
 
 <?php if (!empty($row['profile_picture']) && file_exists('../uploads/profile_pictures/'.$row['profile_picture'])): ?>
@@ -252,18 +254,6 @@ value="<?php echo $row['email']; ?>">
 
 </div>
 
-<div class="col-12 mb-4">
-
-<label>New Password</label>
-
-<input
-type="password"
-name="password"
-class="form-control"
-placeholder="Leave blank if no changes">
-
-</div>
-
 </div>
 
 <button
@@ -278,6 +268,9 @@ Save Changes
 </button>
 
 </form>
+
+<?php include "../includes/change_password_card.php"; ?>
+
 
 </div>
 

@@ -8,6 +8,9 @@ if(!isset($_SESSION['user_id']))
 }
 
 include "../db.php";
+include "../includes/mailer.php";
+include "../includes/reminders.php";
+process_due_reminders($conn);
 
 $totalUsers=mysqli_fetch_assoc(mysqli_query($conn,"
 SELECT COUNT(*) total
@@ -232,12 +235,12 @@ Approved
 </div>
 
 <div class="col-lg-7">
-<div class="card border-0 shadow-sm h-100">
+<div class="card border-0 shadow-sm">
 <div class="card-header bg-white d-flex justify-content-between align-items-center">
 <h5 class="mb-0"><i class="bi bi-clock-history text-primary"></i> Recent Activity</h5>
 <a href="activity_logs.php" class="btn btn-primary btn-sm">View All</a>
 </div>
-<div class="card-body" style="max-height:280px;overflow-y:auto;">
+<div class="card-body py-2">
 
 <?php
 $recentActivity = mysqli_query($conn, "
@@ -249,7 +252,7 @@ LIMIT 8
 ");
 
 if (mysqli_num_rows($recentActivity) === 0) {
-    echo "<p class='text-muted text-center py-4 mb-0'>No activity recorded yet.</p>";
+    echo "<p class='text-muted text-center py-3 mb-0'>No activity recorded yet.</p>";
 } else {
     echo "<ul class='list-unstyled mb-0'>";
     while ($act = mysqli_fetch_assoc($recentActivity)) {

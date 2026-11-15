@@ -1,6 +1,7 @@
 <?php
 session_start();
 header('Content-Type: application/json');
+header('Cache-Control: no-store');
 
 if (!isset($_SESSION['user_id'])) {
     http_response_code(403);
@@ -11,6 +12,12 @@ if (!isset($_SESSION['user_id'])) {
 include 'db.php';
 
 $user_id = (int)$_SESSION['user_id'];
+
+// older databases have no "type" column on notifications - add it once
+$hasType = mysqli_query($conn, "SHOW COLUMNS FROM notifications LIKE 'type'");
+if ($hasType && mysqli_num_rows($hasType) === 0) {
+    mysqli_query($conn, "ALTER TABLE notifications ADD COLUMN type VARCHAR(50) DEFAULT 'general'");
+}
 
 $unread = mysqli_fetch_row(mysqli_query($conn, "
 SELECT COUNT(*) FROM notifications

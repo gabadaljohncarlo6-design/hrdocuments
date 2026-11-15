@@ -278,6 +278,11 @@ Back to Dashboard
 
 </form>
 
+<div class="px-4 pb-4">
+<?php include "../includes/change_password_card.php"; ?>
+</div>
+
+
 </div>
 
 </div>

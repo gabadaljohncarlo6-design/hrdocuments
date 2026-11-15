@@ -49,9 +49,9 @@ body{background:#eef3fb;}
     <a href="deadlines.php"><i class="bi bi-calendar-event-fill"></i> Submission Deadlines</a>
     <a href="find_faculty.php"><i class="bi bi-people-fill"></i> Find Faculty</a>
     <a href="repository.php" class="active"><i class="bi bi-folder-symlink-fill"></i> File Repository</a>
+    <a href="templates.php"><i class="bi bi-file-earmark-arrow-down-fill"></i> Template</a>
     <a href="reports.php"><i class="bi bi-bar-chart-fill"></i> Reports</a>
     <a href="profile.php"><i class="bi bi-person-circle"></i> My Profile</a>
-    <a href="change_password.php"><i class="bi bi-key-fill"></i> Change Password</a>
     <a href="../logout.php" onclick="return confirm('Are you sure you want to log out?')"><i class="bi bi-box-arrow-right"></i> Logout</a>
 </div>
 

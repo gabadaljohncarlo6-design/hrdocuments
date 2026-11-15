@@ -31,7 +31,7 @@ if (!$deadline) {
     exit();
 }
 
-$count = send_weekly_reminder_for_deadline($conn, $deadline);
+$count = send_deadline_reminder($conn, $deadline);
 
 $hr_id = (int)$_SESSION['user_id'];
 $catName = mysqli_real_escape_string($conn, $deadline['category_name']);

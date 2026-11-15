@@ -11,7 +11,7 @@ include "../db.php";
 include "../includes/mailer.php";
 include "../includes/reminders.php";
 
-process_due_weekly_reminders($conn);
+process_due_reminders($conn);
 
 $message = "";
 
@@ -22,7 +22,6 @@ if (isset($_POST['post_deadline'])) {
     $deadline_time = mysqli_real_escape_string($conn, $_POST['deadline_time']);
     $note = mysqli_real_escape_string($conn, $_POST['message']);
     $hr_id = (int)$_SESSION['user_id'];
-    $weekly_reminder = isset($_POST['weekly_reminder']) ? 1 : 0;
 
     $catResult = mysqli_query($conn, "SELECT category_name FROM document_categories WHERE category_id = '$category_id'");
     $cat = mysqli_fetch_assoc($catResult);
@@ -32,8 +31,8 @@ if (isset($_POST['post_deadline'])) {
     } else {
 
         mysqli_query($conn, "
-        INSERT INTO submission_deadlines (category_id, deadline_date, deadline_time, message, created_by, status, weekly_reminder)
-        VALUES ('$category_id', '$deadline_date', '$deadline_time', '$note', '$hr_id', 'Active', '$weekly_reminder')
+        INSERT INTO submission_deadlines (category_id, deadline_date, deadline_time, message, created_by, status)
+        VALUES ('$category_id', '$deadline_date', '$deadline_time', '$note', '$hr_id', 'Active')
         ");
 
         $deadline_id = mysqli_insert_id($conn);
@@ -125,7 +124,7 @@ ORDER BY sd.deadline_date DESC, sd.deadline_time DESC
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
 body{background:#eef3fb;overflow-x:hidden;}
-.sidebar{position:fixed;left:0;top:0;width:210px;height:100vh;background:linear-gradient(180deg,#0A2E73,#123C92);padding:25px;overflow-y:auto;}
+.sidebar{position:fixed;left:0;top:0;width:210px;height:100vh;background:linear-gradient(180deg,#5b92e5,#2a63bd);padding:25px;overflow-y:auto;}
 .sidebar img{width:90px;display:block;margin:auto;}
 .sidebar h3{color:#fff;text-align:center;margin-top:15px;font-weight:700;}
 .sidebar p{color:#ddd;text-align:center;margin-bottom:35px;font-size:14px;}
@@ -152,9 +151,9 @@ body{background:#eef3fb;overflow-x:hidden;}
     <a href="deadlines.php" class="active"><i class="bi bi-calendar-event-fill"></i> Submission Deadlines</a>
     <a href="find_faculty.php"><i class="bi bi-people-fill"></i> Find Faculty</a>
 <a href="repository.php"><i class="bi bi-folder-symlink-fill"></i> File Repository</a>
+<a href="templates.php"><i class="bi bi-file-earmark-arrow-down-fill"></i> Template</a>
     <a href="reports.php"><i class="bi bi-bar-chart-fill"></i> Reports</a>
     <a href="profile.php"><i class="bi bi-person-circle"></i> My Profile</a>
-    <a href="change_password.php"><i class="bi bi-key-fill"></i> Change Password</a>
     <a href="../logout.php" onclick="return confirm('Are you sure you want to log out?')"><i class="bi bi-box-arrow-right"></i> Logout</a>
 </div>
 
@@ -205,11 +204,9 @@ body{background:#eef3fb;overflow-x:hidden;}
         </div>
 
         <div class="col-12">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="weekly_reminder" value="1" id="weeklyReminder">
-                <label class="form-check-label" for="weeklyReminder">
-                    Send a weekly reminder to faculty who haven't submitted yet (repeats every 7 days until the deadline)
-                </label>
+            <div class="alert alert-info py-2 mb-0">
+                <i class="bi bi-bell-fill"></i>
+                Automatic reminder: one day before the deadline, only faculty who have not yet submitted this document for the month will be reminded (in-app and email).
             </div>
         </div>
     </form>
@@ -226,7 +223,7 @@ body{background:#eef3fb;overflow-x:hidden;}
                 <th>Deadline</th>
                 <th>Note</th>
                 <th>Submission Progress</th>
-                <th>Weekly Reminder</th>
+                <th>Reminder</th>
                 <th width="140">Action</th>
             </tr>
         </thead>
@@ -258,17 +255,13 @@ body{background:#eef3fb;overflow-x:hidden;}
                     <small class="text-muted"><?php echo $submitted; ?> of <?php echo $d['total_faculty']; ?> faculty submitted</small>
                 </td>
                 <td>
-                    <?php if ($d['weekly_reminder']): ?>
-                        <span class="badge bg-success mb-1">On</span><br>
-                        <small class="text-muted">
-                            Last sent: <?php echo $d['last_reminder_sent'] ? date("M j, g:i A", strtotime($d['last_reminder_sent'])) : 'Not yet sent'; ?>
-                        </small><br>
-                        <button type="button" class="btn btn-sm btn-outline-secondary mt-1" onclick="sendReminderNow(<?php echo $d['deadline_id']; ?>, this)">
-                            <i class="bi bi-send-fill"></i> Send Now
-                        </button>
-                    <?php else: ?>
-                        <span class="badge bg-secondary">Off</span>
-                    <?php endif; ?>
+                    <span class="badge bg-success mb-1">Auto: 1 day before</span><br>
+                    <small class="text-muted">
+                        Last sent: <?php echo $d['last_reminder_sent'] ? date("M j, g:i A", strtotime($d['last_reminder_sent'])) : 'Not yet sent'; ?>
+                    </small><br>
+                    <button type="button" class="btn btn-sm btn-outline-secondary mt-1" onclick="sendReminderNow(<?php echo $d['deadline_id']; ?>, this)">
+                        <i class="bi bi-send-fill"></i> Send Now
+                    </button>
                 </td>
                 <td>
                     <a href="deadline_submissions.php?id=<?php echo $d['deadline_id']; ?>" class="btn btn-sm btn-info">

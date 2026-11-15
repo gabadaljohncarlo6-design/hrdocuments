@@ -46,7 +46,7 @@ $total_docs = mysqli_num_rows($documents);
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
 body{background:#eef3fb;overflow-x:hidden;}
-.sidebar{position:fixed;top:0;left:0;width:110px;height:100vh;background:linear-gradient(180deg,#0A2E73,#123C92);padding:16px 8px;overflow-y:auto;overflow-x:hidden;z-index:999;}
+.sidebar{position:fixed;top:0;left:0;width:110px;height:100vh;background:linear-gradient(180deg,#5b92e5,#2a63bd);padding:16px 8px;overflow-y:auto;overflow-x:hidden;z-index:999;}
 .sidebar img{width:44px;display:block;margin:auto;}
 .sidebar h3{color:#fff;text-align:center;margin-top:8px;font-weight:700;font-size:12px;line-height:1.2;}
 .sidebar p{color:#ddd;text-align:center;margin-bottom:18px;font-size:10px;}
@@ -77,9 +77,9 @@ body{background:#eef3fb;overflow-x:hidden;}
     <a href="deadlines.php"><i class="bi bi-calendar-event-fill"></i> Submission Deadlines</a>
     <a href="find_faculty.php" class="active"><i class="bi bi-people-fill"></i> Find Faculty</a>
 <a href="repository.php"><i class="bi bi-folder-symlink-fill"></i> File Repository</a>
+<a href="templates.php"><i class="bi bi-file-earmark-arrow-down-fill"></i> Template</a>
     <a href="reports.php"><i class="bi bi-bar-chart-fill"></i> Reports</a>
     <a href="profile.php"><i class="bi bi-person-circle"></i> My Profile</a>
-    <a href="change_password.php"><i class="bi bi-key-fill"></i> Change Password</a>
     <a href="../logout.php" onclick="return confirm('Are you sure you want to log out?')"><i class="bi bi-box-arrow-right"></i> Logout</a>
 </div>
 

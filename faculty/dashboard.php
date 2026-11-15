@@ -9,14 +9,12 @@ if(!isset($_SESSION['user_id']))
 }
 
 include "../db.php";
+include "../includes/mailer.php";
+include "../includes/reminders.php";
+process_due_reminders($conn);
 
 $user_id = $_SESSION['user_id'];
 
-mysqli_query($conn,"
-UPDATE notifications
-SET is_read='1'
-WHERE user_id='$user_id'
-");
 
 $total=mysqli_fetch_row(mysqli_query($conn,"
 SELECT COUNT(*)
@@ -248,9 +246,9 @@ Notifications
 My Profile
 </a>
 
-<a href="change_password.php">
-<i class="bi bi-key-fill"></i>
-Change Password
+<a href="templates.php">
+<i class="bi bi-file-earmark-arrow-down-fill"></i>
+Template
 </a>
 
 <a href="../logout.php" onclick="return confirm('Are you sure you want to log out?')">
@@ -286,93 +284,13 @@ AND is_read='0'
 ?>
 
 <div class="dropdown">
-
-<button
-class="btn btn-light position-relative"
-data-bs-toggle="dropdown">
-
-<i class="bi bi-bell-fill fs-4"></i>
-
-<?php if($notifCount>0){ ?>
-
-<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-
-<?php echo $notifCount; ?>
-
-</span>
-
-<?php } ?>
-
-</button>
-
-<ul class="dropdown-menu dropdown-menu-end" style="width:350px;max-height:350px;overflow:auto;">
-
-<?php
-
-$notif=mysqli_query($conn,"
-SELECT *
-FROM notifications
-WHERE user_id='$user_id'
-ORDER BY notification_id DESC
-LIMIT 10
-");
-
-if(mysqli_num_rows($notif)>0)
-{
-
-while($n=mysqli_fetch_assoc($notif))
-{
-
-?>
-
-<li>
-
-<div class="dropdown-item">
-
-<?php echo htmlspecialchars($n['message']); ?>
-
-<br>
-
-<small class="text-muted">
-
-<?php echo date("M d, Y h:i A",strtotime($n['created_at'])); ?>
-
-</small>
-
-</div>
-
-</li>
-
-<li><hr class="dropdown-divider"></li>
-
-<?php
-
-}
-
-}
-else
-{
-
-?>
-
-<li>
-
-<div class="dropdown-item text-center">
-
-No notifications
-
-</div>
-
-</li>
-
-<?php
-
-}
-
-?>
-
-</ul>
-
+    <button class="btn position-relative" id="notifBell" data-bs-toggle="dropdown" style="border:none;background:none;">
+        <i class="bi bi-bell-fill fs-4" style="color:#0A2E73;"></i>
+        <span id="notifBadge" class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle" style="display:none;font-size:10px;">0</span>
+    </button>
+    <div class="dropdown-menu dropdown-menu-end p-0" style="width:340px;max-height:400px;overflow-y:auto;" id="notifDropdown">
+        <div class="p-3 text-center text-muted">Loading...</div>
+    </div>
 </div>
 
 <?php require_once __DIR__ . '/../includes/avatar.php'; echo topbar_avatar($conn); ?>
@@ -579,6 +497,15 @@ row.style.display=text.includes(filter) ? "" : "none";
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+<script>
+function notifLink(type){
+    if (type === 'template') return 'templates.php';
+    if (type === 'deadline' || type === 'deadline_reminder') return 'upload.php';
+    return '';
+}
+window.notifLink = notifLink;
+</script>
+<script src="../assets/notifications.js"></script>
 </body>
 
 </html>

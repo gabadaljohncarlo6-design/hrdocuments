@@ -123,6 +123,7 @@ Manage Users
 <i class="bi bi-folder-symlink-fill"></i>
 File Repository
 </a>
+<a href="templates.php"><i class="bi bi-file-earmark-arrow-down-fill"></i> Template</a>
 
 <a href="activity_logs.php">
 <i class="bi bi-clock-history"></i>
