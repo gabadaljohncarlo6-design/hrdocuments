@@ -18,13 +18,13 @@ if (isset($_POST['send_reset'])) {
 
     if ($user) {
         $token = bin2hex(random_bytes(32));
-        $expiry = date("Y-m-d H:i:s", strtotime("+1 hour"));
+       
 
         mysqli_query($conn, "
-        UPDATE users
-        SET reset_token = '$token', reset_token_expiry = '$expiry'
-        WHERE user_id = '{$user['user_id']}'
-        ");
+UPDATE users
+SET reset_token = '$token', reset_token_expiry = DATE_ADD(NOW(), INTERVAL 1 HOUR)
+WHERE user_id = '{$user['user_id']}'
+");
 
         $resetLink = (isset($_SERVER['HTTPS']) ? "https://" : "http://") . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . "/reset_password.php?token=$token";
 
