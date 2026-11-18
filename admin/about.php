@@ -48,7 +48,11 @@ This Human Resource Management System was developed to digitize and manage facul
 
 <h5>Developer</h5>
 
-<p><strong>John Carlo Gabadal</strong></p>
+<p><strong>John Carlo P. 
+    Gabadal</strong></p>
+<p><strong>Members: Michael Atilano JR. &  Gian Alexis Ecle</strong></p>
+
+
 
 <h5>Course</h5>
 

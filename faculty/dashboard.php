@@ -11,7 +11,7 @@ if(!isset($_SESSION['user_id']))
 include "../db.php";
 include "../includes/mailer.php";
 include "../includes/reminders.php";
-process_due_reminders($conn);
+if (function_exists("process_due_reminders")) { process_due_reminders($conn); }
 
 $user_id = $_SESSION['user_id'];
 

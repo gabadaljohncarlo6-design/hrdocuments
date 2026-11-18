@@ -145,7 +145,7 @@ color:black;
 
 <div class="card p-4">
 
-<a href="dashboard.php" class="btn btn-secondary mb-3"><i class="bi bi-arrow-left"></i> Back</a>
+<div class="d-flex justify-content-end mb-2"><a href="dashboard.php" class="btn btn-secondary btn-sm py-1 px-2" style="font-size:12px;"><i class="bi bi-arrow-left"></i> Back</a></div>
 
 <div class="text-center">
 

@@ -500,10 +500,6 @@ class="form-control"
 placeholder="Enter your password"
 required>
 
-<div class="text-end mt-2">
-<a href="forgot_password.php" style="font-size:13px;color:var(--navy);text-decoration:none;font-weight:500;">Forgot Password?</a>
-</div>
-
 </div>
 
 <button

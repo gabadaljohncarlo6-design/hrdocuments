@@ -11,13 +11,9 @@ if(!isset($_SESSION['user_id']))
 include "../db.php";
 include "../includes/mailer.php";
 include "../includes/reminders.php";
+if (function_exists("process_due_reminders")) { process_due_reminders($conn); }
 
 date_default_timezone_set("Asia/Manila");
-
-// Automatically remind faculty who haven't submitted before a deadline
-if (isset($_SESSION['role']) && $_SESSION['role'] === 'hr') {
-    process_due_weekly_reminders($conn);
-}
 
 /*
 |--------------------------------------------------------------------------
@@ -87,6 +83,9 @@ if(isset($_POST['update']))
         'status_update'
     )
     ");
+
+    require_once __DIR__ . '/../includes/notify_admins.php';
+    notify_admins($conn, "HR marked " . $doc['first_name'] . " " . $doc['last_name'] . "'s document '" . $doc['document_title'] . "' as " . $status, 'status_update');
 
     if (!empty($doc['email'])) {
         $statusColor = "#0A2E73";
@@ -366,6 +365,7 @@ color:#0A2E73;
         <i class="bi bi-folder-symlink-fill"></i>
         File Repository
     </a>
+<a href="templates.php"><i class="bi bi-file-earmark-arrow-down-fill"></i> Template</a>
 
     <a href="reports.php">
         <i class="bi bi-bar-chart-fill"></i>
@@ -377,10 +377,6 @@ color:#0A2E73;
         My Profile
     </a>
 
-    <a href="change_password.php">
-        <i class="bi bi-key-fill"></i>
-        Change Password
-    </a>
 
     <a href="../logout.php" onclick="return confirm('Are you sure you want to log out?')">
         <i class="bi bi-box-arrow-right"></i>
@@ -624,8 +620,6 @@ This Year
 
 </select>
 
-<button type="button" id="clearFilters" class="btn btn-outline-secondary" title="Reset search and all filters">Clear</button>
-
 </div>
 
 </div>
@@ -762,13 +756,6 @@ $st=$row['status'];
 
 ?>
 
-<tr id="noResultsRow" style="display:none">
-<td colspan="9" class="text-center text-muted py-4">
-No documents match your search/filters.
-<a href="#" id="noResultsClear">Clear filters</a>
-</td>
-</tr>
-
 </tbody>
 
 </table>
@@ -777,99 +764,7 @@ No documents match your search/filters.
 
 </div>
 
-<div class="chart-card">
-
-<h4>
-
-Documents by Category
-
-</h4>
-
-<canvas id="categoryChart"></canvas>
-
-</div>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<?php
-
-$chart=mysqli_query($conn,"
-SELECT
-document_categories.category_name,
-COUNT(*) total
-FROM documents
-LEFT JOIN document_categories
-ON document_categories.category_id=documents.category_id
-GROUP BY document_categories.category_name
-");
-
-$categoryLabels=[];
-$categoryCounts=[];
-
-while($c=mysqli_fetch_assoc($chart))
-{
-    $categoryLabels[]=$c['category_name'];
-    $categoryCounts[]=$c['total'];
-}
-
-?>
-
 <script>
-
-const ctx=document.getElementById("categoryChart");
-
-if(ctx){
-
-new Chart(ctx,{
-
-type:"bar",
-
-data:{
-
-labels:<?php echo json_encode($categoryLabels); ?>,
-
-datasets:[{
-
-label:"Documents",
-
-data:<?php echo json_encode($categoryCounts); ?>,
-
-backgroundColor:"#0d6efd",
-
-borderRadius:8
-
-}]
-
-},
-
-options:{
-
-responsive:true,
-
-plugins:{
-
-legend:{
-
-display:false
-
-}
-
-},
-
-scales:{
-
-y:{
-
-beginAtZero:true
-
-}
-
-}
-
-}
-
-});
-
-}
 
 const searchInput=document.getElementById("searchInput");
 const categoryFilter=document.getElementById("categoryFilter");
@@ -878,79 +773,102 @@ const dateFilter=document.getElementById("dateFilter");
 
 function filterTable(){
 
-const terms=searchInput.value.toLowerCase().trim().split(/\s+/).filter(Boolean);
-const category=categoryFilter.value.trim().toLowerCase();
-const status=statusFilter.value.trim().toLowerCase();
-const date=dateFilter.value;
+let search=searchInput.value.toLowerCase();
+let category=categoryFilter.value.toLowerCase();
+let status=statusFilter.value.toLowerCase();
+let date=dateFilter.value;
 
-const now=new Date();
-const startToday=new Date(now.getFullYear(),now.getMonth(),now.getDate());
-const startWeek=new Date(startToday);
-startWeek.setDate(startWeek.getDate()-6);
+let today=new Date();
 
-let visible=0;
+document.querySelectorAll("#documentsTable tbody tr").forEach(function(row){
 
-document.querySelectorAll("#documentsTable tbody tr:not(#noResultsRow)").forEach(function(row){
+let employee=row.cells[1].innerText.toLowerCase();
+let categoryText=row.cells[2].innerText.toLowerCase();
+let title=row.cells[3].innerText.toLowerCase();
 
-const cells=row.cells;
-const categoryText=cells[2].innerText.trim().toLowerCase();
-const statusText=cells[6].querySelector("select").value.trim().toLowerCase();
-const remarksEl=cells[8].querySelector("input");
+let statusText=row.cells[6]
+.querySelector("select")
+.value
+.toLowerCase();
 
-// everything searchable in one string
-const haystack=(
-cells[0].innerText+" "+
-cells[1].innerText+" "+
-cells[2].innerText+" "+
-cells[3].innerText+" "+
-cells[4].innerText+" "+
-statusText+" "+
-(remarksEl?remarksEl.value:"")
-).toLowerCase().replace(/\s+/g," ");
+let submitted=new Date(row.cells[7].innerText);
 
-const submitted=new Date(cells[7].innerText.trim());
-const submittedDay=new Date(submitted.getFullYear(),submitted.getMonth(),submitted.getDate());
+let matchSearch=
+employee.includes(search)||
+title.includes(search)||
+categoryText.includes(search);
 
-const matchSearch=terms.every(function(t){return haystack.includes(t);});
-const matchCategory=category===""||categoryText===category;
-const matchStatus=status===""||statusText===status;
+let matchCategory=
+category===""||
+categoryText===category;
+
+let matchStatus=
+status===""||
+statusText===status;
 
 let matchDate=true;
-if(date==="today")matchDate=submittedDay.getTime()===startToday.getTime();
-else if(date==="week")matchDate=submittedDay>=startWeek&&submittedDay<=startToday;
-else if(date==="month")matchDate=submitted.getMonth()===now.getMonth()&&submitted.getFullYear()===now.getFullYear();
-else if(date==="year")matchDate=submitted.getFullYear()===now.getFullYear();
 
-const show=matchSearch&&matchCategory&&matchStatus&&matchDate;
-row.style.display=show?"":"none";
-if(show)visible++;
+if(date==="today")
+{
+
+matchDate=submitted.toDateString()===today.toDateString();
+
+}
+
+if(date==="week")
+{
+
+let weekAgo=new Date();
+
+weekAgo.setDate(today.getDate()-7);
+
+matchDate=submitted>=weekAgo;
+
+}
+
+if(date==="month")
+{
+
+matchDate=
+submitted.getMonth()===today.getMonth()&&
+submitted.getFullYear()===today.getFullYear();
+
+}
+
+if(date==="year")
+{
+
+matchDate=
+submitted.getFullYear()===today.getFullYear();
+
+}
+
+row.style.display=
+
+(matchSearch&&matchCategory&&matchStatus&&matchDate)
+
+?
+
+""
+
+:
+
+"none";
 
 });
 
-document.getElementById("noResultsRow").style.display=visible===0?"":"none";
-
 }
 
-function clearFilters(){
-searchInput.value="";
-categoryFilter.value="";
-statusFilter.value="";
-dateFilter.value="";
-filterTable();
-}
-
-searchInput.addEventListener("input",filterTable);
+searchInput.addEventListener("keyup",filterTable);
 categoryFilter.addEventListener("change",filterTable);
 statusFilter.addEventListener("change",filterTable);
-dateFilter.addEventListener("change",filterTable);
-document.getElementById("clearFilters").addEventListener("click",clearFilters);
-document.getElementById("noResultsClear").addEventListener("click",function(e){e.preventDefault();clearFilters();});
 
 function statFilter(v){
     statusFilter.value=v;
     filterTable();
     statusFilter.scrollIntoView({behavior:"smooth",block:"center"});
 }
+dateFilter.addEventListener("change",filterTable);
 
 </script>
 
@@ -963,42 +881,8 @@ function escapeHtml(str){
     return d.innerHTML;
 }
 
-function loadNotifications(){
-    fetch('../notifications_ajax.php')
-        .then(r => r.json())
-        .then(data => {
-            const badge = document.getElementById('notifBadge');
-            if (data.unread_count > 0) {
-                badge.style.display = 'inline-block';
-                badge.textContent = data.unread_count > 9 ? '9+' : data.unread_count;
-            } else {
-                badge.style.display = 'none';
-            }
-
-            const dropdown = document.getElementById('notifDropdown');
-            if (!data.notifications || data.notifications.length === 0) {
-                dropdown.innerHTML = '<div class="p-3 text-center text-muted">No notifications yet.</div>';
-                return;
-            }
-
-            dropdown.innerHTML = data.notifications.map(n => `
-                <a href="#" class="dropdown-item ${n.is_read ? '' : 'bg-light'} py-2 border-bottom" onclick="markNotifRead(${n.id}); return false;">
-                    <div style="font-size:13px;white-space:normal;">${escapeHtml(n.message)}</div>
-                    <small class="text-muted">${n.time}</small>
-                </a>
-            `).join('');
-        })
-        .catch(() => {});
-}
-
-function markNotifRead(id){
-    fetch('../mark_notifications.php?id=' + id).then(() => loadNotifications());
-}
-
-document.getElementById('notifBell').addEventListener('click', loadNotifications);
-loadNotifications();
-setInterval(loadNotifications, 30000);
 </script>
+<script src="../assets/notifications.js"></script>
 
 </body>
 

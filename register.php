@@ -111,6 +111,9 @@ if (isset($_POST['register'])) {
             VALUES ('$new_user_id', 'New faculty account registered', 'Authentication', '$ip')
             ");
 
+            require_once __DIR__ . '/includes/notify_admins.php';
+            notify_admins($conn, "New faculty account registered: " . $_POST['first_name'] . " " . $_POST['last_name'] . " (" . $_POST['employee_id'] . ")", 'new_user');
+
             mysqli_query($conn, "
             UPDATE authorized_employee_ids
             SET is_claimed = 1, claimed_at = NOW()
@@ -393,6 +396,7 @@ if (isset($_POST['register'])) {
                                     pattern="[a-zA-Z0-9._%+-]+@gmail\.com"
                                     title="Please enter a valid Gmail address (must end in @gmail.com)"
                                     required>
+                                <small class="text-muted">Use a working Gmail address you can open. Your login codes and system notices are sent there.</small>
                             </div>
 
                             <div class="col-12 mb-4">
@@ -402,7 +406,12 @@ if (isset($_POST['register'])) {
                                     name="password"
                                     class="form-control"
                                     placeholder="Create Password"
+                                    id="pwInput"
                                     required>
+                                <div style="height:6px;background:#e5e9f2;border-radius:6px;margin-top:8px;overflow:hidden;">
+                                    <div id="pwBar" style="height:100%;width:0;transition:.25s;"></div>
+                                </div>
+                                <small id="pwHint" class="text-muted">Recommended: at least 8 characters with uppercase, lowercase, a number and a symbol. You may still use any password you want.</small>
                             </div>
 
                         </div>
@@ -453,5 +462,22 @@ if (isset($_POST['register'])) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script src="assets/password-toggle.js"></script>
+<script>
+(function(){
+    var i=document.getElementById('pwInput'),b=document.getElementById('pwBar'),h=document.getElementById('pwHint');
+    if(!i)return;
+    i.addEventListener('input',function(){
+        var v=i.value,s=0;
+        if(v.length>=8)s++; if(/[a-z]/.test(v)&&/[A-Z]/.test(v))s++; if(/\d/.test(v))s++; if(/[^A-Za-z0-9]/.test(v))s++;
+        var lv=[['0%','#ccc','Recommended: at least 8 characters with uppercase, lowercase, a number and a symbol. You may still use any password you want.'],
+                ['25%','#dc3545','Weak password. A stronger one is recommended, but you can still use it.'],
+                ['50%','#fd7e14','Fair password. Add more variety to make it stronger.'],
+                ['75%','#ffc107','Good password.'],
+                ['100%','#198754','Strong password!']];
+        var x=v.length?lv[Math.max(s,1)]:lv[0];
+        b.style.width=x[0];b.style.background=x[1];h.textContent=x[2];
+    });
+})();
+</script>
 </body>
 </html>
