@@ -11,7 +11,7 @@ include "../db.php";
 include "../includes/mailer.php";
 include "../includes/reminders.php";
 
-process_due_reminders($conn);
+process_due_weekly_reminders($conn);
 
 $message = "";
 
@@ -103,9 +103,7 @@ if (isset($_POST['post_deadline'])) {
 $categories = mysqli_query($conn, "SELECT * FROM document_categories ORDER BY category_name ASC");
 
 $deadlines = mysqli_query($conn, "
-SELECT sd.*, dc.category_name,
-    (SELECT COUNT(*) FROM users WHERE role='faculty' AND status='Active') AS total_faculty,
-    (SELECT COUNT(DISTINCT d.user_id) FROM documents d WHERE d.category_id = sd.category_id AND d.submitted_at >= sd.created_at) AS submitted_count
+SELECT sd.*, dc.category_name
 FROM submission_deadlines sd
 JOIN document_categories dc ON dc.category_id = sd.category_id
 ORDER BY sd.deadline_date DESC, sd.deadline_time DESC
@@ -124,7 +122,7 @@ ORDER BY sd.deadline_date DESC, sd.deadline_time DESC
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
 body{background:#eef3fb;overflow-x:hidden;}
-.sidebar{position:fixed;left:0;top:0;width:210px;height:100vh;background:linear-gradient(180deg,#5b92e5,#2a63bd);padding:25px;overflow-y:auto;}
+.sidebar{position:fixed;left:0;top:0;width:210px;height:100vh;background:linear-gradient(180deg,#0A2E73,#123C92);padding:25px;overflow-y:auto;}
 .sidebar img{width:90px;display:block;margin:auto;}
 .sidebar h3{color:#fff;text-align:center;margin-top:15px;font-weight:700;}
 .sidebar p{color:#ddd;text-align:center;margin-bottom:35px;font-size:14px;}
@@ -151,9 +149,9 @@ body{background:#eef3fb;overflow-x:hidden;}
     <a href="deadlines.php" class="active"><i class="bi bi-calendar-event-fill"></i> Submission Deadlines</a>
     <a href="find_faculty.php"><i class="bi bi-people-fill"></i> Find Faculty</a>
 <a href="repository.php"><i class="bi bi-folder-symlink-fill"></i> File Repository</a>
-<a href="templates.php"><i class="bi bi-file-earmark-arrow-down-fill"></i> Template</a>
     <a href="reports.php"><i class="bi bi-bar-chart-fill"></i> Reports</a>
     <a href="profile.php"><i class="bi bi-person-circle"></i> My Profile</a>
+    <a href="change_password.php"><i class="bi bi-key-fill"></i> Change Password</a>
     <a href="../logout.php" onclick="return confirm('Are you sure you want to log out?')"><i class="bi bi-box-arrow-right"></i> Logout</a>
 </div>
 
@@ -204,10 +202,7 @@ body{background:#eef3fb;overflow-x:hidden;}
         </div>
 
         <div class="col-12">
-            <div class="alert alert-info py-2 mb-0">
-                <i class="bi bi-bell-fill"></i>
-                Automatic reminder: one day before the deadline, only faculty who have not yet submitted this document for the month will be reminded (in-app and email).
-            </div>
+            <small class="text-muted"><i class="bi bi-info-circle"></i> Faculty who haven't submitted are reminded automatically the day before the deadline.</small>
         </div>
     </form>
 </div>
@@ -221,19 +216,12 @@ body{background:#eef3fb;overflow-x:hidden;}
             <tr>
                 <th>Document</th>
                 <th>Deadline</th>
-                <th>Note</th>
-                <th>Submission Progress</th>
-                <th>Reminder</th>
-                <th width="140">Action</th>
             </tr>
         </thead>
         <tbody>
         <?php if (mysqli_num_rows($deadlines) === 0): ?>
-            <tr><td colspan="6" class="text-center text-muted py-4">No deadlines posted yet.</td></tr>
+            <tr><td colspan="2" class="text-center text-muted py-4">No deadlines posted yet.</td></tr>
         <?php else: while ($d = mysqli_fetch_assoc($deadlines)):
-            $total = max((int)$d['total_faculty'], 1);
-            $submitted = (int)$d['submitted_count'];
-            $pct = round(($submitted / $total) * 100);
             $isPast = strtotime($d['deadline_date'].' '.$d['deadline_time']) < time();
         ?>
             <tr>
@@ -247,27 +235,6 @@ body{background:#eef3fb;overflow-x:hidden;}
                         <span class="badge bg-success ms-1">Upcoming</span>
                     <?php endif; ?>
                 </td>
-                <td><?php echo htmlspecialchars($d['message'] ?: '—'); ?></td>
-                <td style="min-width:200px;">
-                    <div class="progress">
-                        <div class="progress-bar bg-primary" style="width:<?php echo $pct; ?>%"><?php echo $pct; ?>%</div>
-                    </div>
-                    <small class="text-muted"><?php echo $submitted; ?> of <?php echo $d['total_faculty']; ?> faculty submitted</small>
-                </td>
-                <td>
-                    <span class="badge bg-success mb-1">Auto: 1 day before</span><br>
-                    <small class="text-muted">
-                        Last sent: <?php echo $d['last_reminder_sent'] ? date("M j, g:i A", strtotime($d['last_reminder_sent'])) : 'Not yet sent'; ?>
-                    </small><br>
-                    <button type="button" class="btn btn-sm btn-outline-secondary mt-1" onclick="sendReminderNow(<?php echo $d['deadline_id']; ?>, this)">
-                        <i class="bi bi-send-fill"></i> Send Now
-                    </button>
-                </td>
-                <td>
-                    <a href="deadline_submissions.php?id=<?php echo $d['deadline_id']; ?>" class="btn btn-sm btn-info">
-                        <i class="bi bi-eye-fill"></i> View
-                    </a>
-                </td>
             </tr>
         <?php endwhile; endif; ?>
         </tbody>
@@ -278,31 +245,5 @@ body{background:#eef3fb;overflow-x:hidden;}
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-function sendReminderNow(deadlineId, btn) {
-    if (!confirm('Send reminder now to everyone who has not submitted yet?')) return;
-
-    btn.disabled = true;
-    btn.innerHTML = 'Sending...';
-
-    fetch(`send_reminder.php?id=${deadlineId}`)
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                alert(`Reminder sent to ${data.notified} faculty member(s).`);
-                location.reload();
-            } else {
-                alert(data.message || 'Failed to send reminder.');
-                btn.disabled = false;
-                btn.innerHTML = '<i class="bi bi-send-fill"></i> Send Now';
-            }
-        })
-        .catch(() => {
-            alert('Something went wrong.');
-            btn.disabled = false;
-            btn.innerHTML = '<i class="bi bi-send-fill"></i> Send Now';
-        });
-}
-</script>
 </body>
 </html>
