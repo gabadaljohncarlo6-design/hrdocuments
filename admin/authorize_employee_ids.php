@@ -167,9 +167,6 @@ body{background:#eef3fb;overflow-x:hidden;}
 <div class="d-flex justify-content-between align-items-center mb-3">
 <h5 class="fw-bold mb-0"><i class="bi bi-list-check"></i> Authorized Employee IDs</h5>
 
-<form method="GET" class="d-flex" style="max-width:300px;">
-<input type="text" name="search" class="form-control" placeholder="Search Employee ID" value="<?php echo htmlspecialchars($search); ?>">
-</form>
 </div>
 
 <div class="table-responsive">
@@ -180,12 +177,11 @@ body{background:#eef3fb;overflow-x:hidden;}
 <th>Department</th>
 <th>Added</th>
 <th>Status</th>
-<th width="120">Action</th>
 </tr>
 </thead>
 <tbody>
 <?php if (mysqli_num_rows($list) === 0): ?>
-<tr><td colspan="5" class="text-center text-muted py-4">No authorized Employee IDs yet.</td></tr>
+<tr><td colspan="4" class="text-center text-muted py-4">No authorized Employee IDs yet.</td></tr>
 <?php else: while ($row = mysqli_fetch_assoc($list)): ?>
 <tr>
 <td><?php echo htmlspecialchars($row['employee_id']); ?></td>
@@ -196,15 +192,6 @@ body{background:#eef3fb;overflow-x:hidden;}
 <span class="badge bg-success">Claimed<?php echo $row['first_name'] ? ' — '.htmlspecialchars($row['first_name'].' '.$row['last_name']) : ''; ?></span>
 <?php else: ?>
 <span class="badge bg-warning text-dark">Not Registered Yet</span>
-<?php endif; ?>
-</td>
-<td>
-<?php if (!$row['is_claimed']): ?>
-<a href="authorize_employee_ids.php?delete=<?php echo $row['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Remove this authorized Employee ID?')">
-<i class="bi bi-trash-fill"></i>
-</a>
-<?php else: ?>
-<span class="text-muted">—</span>
 <?php endif; ?>
 </td>
 </tr>
