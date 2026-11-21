@@ -25,8 +25,11 @@ if (!is_dir("../backup")) {
 // mysqldump is often not in the Windows PATH on XAMPP installs,
 // so try the common XAMPP location first, then fall back to a bare
 // command in case it IS on PATH (e.g. on Linux/Mac XAMPP or MAMP).
+$xamppRoot = dirname(__DIR__, 3);   // works for C:\\xampp, C:\\xampp1, D:\\xampp ...
 $candidates = [
+    $xamppRoot . "\\mysql\\bin\\mysqldump.exe",
     "C:\\xampp\\mysql\\bin\\mysqldump.exe",
+    "C:\\xampp1\\mysql\\bin\\mysqldump.exe",
     "mysqldump",
 ];
 
@@ -68,7 +71,7 @@ if ($success) {
     </script>";
 } else {
     echo "<script>
-    alert('Backup failed. mysqldump could not be found or run. Check that XAMPP is installed at C:\\\\xampp, or that mysqldump is on your system PATH.');
+    alert('Backup failed. mysqldump could not be found or run. Check that XAMPP is installed correctly, or that mysqldump is on your system PATH.');
     history.back();
     </script>";
 }

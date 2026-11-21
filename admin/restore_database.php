@@ -28,10 +28,13 @@ if (isset($_POST['restore']) && isset($_FILES['sql_file'])) {
 
         $tmpPath = $_FILES['sql_file']['tmp_name'];
 
-        $candidates = [
-            "C:\\xampp\\mysql\\bin\\mysql.exe",
-            "mysql",
-        ];
+        $xamppRoot = dirname(__DIR__, 3);   // works for C:\\xampp, C:\\xampp1, D:\\xampp ...
+$candidates = [
+    $xamppRoot . "\\mysql\\bin\\mysql.exe",
+    "C:\\xampp\\mysql\\bin\\mysql.exe",
+    "C:\\xampp1\\mysql\\bin\\mysql.exe",
+    "mysql",
+];
 
         $success = false;
 
@@ -70,7 +73,7 @@ if (isset($_POST['restore']) && isset($_FILES['sql_file'])) {
 
             $message = "<div class='alert alert-success'>Database restored successfully from <strong>" . htmlspecialchars($_FILES['sql_file']['name']) . "</strong>.</div>";
         } else {
-            $message = "<div class='alert alert-danger'>Restore failed. Check that XAMPP is installed at C:\\xampp, or that the mysql client is on your system PATH, and that the file is a valid SQL dump.</div>";
+            $message = "<div class='alert alert-danger'>Restore failed. Check that XAMPP is installed correctly, or that the mysql client is on your system PATH, and that the file is a valid SQL dump.</div>";
         }
     }
 }
