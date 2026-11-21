@@ -65,6 +65,7 @@ body{background:#eef3fb;overflow-x:hidden;}
     <p>HR Staff Panel</p>
 
     <a href="dashboard.php"><i class="bi bi-speedometer2"></i> Dashboard</a>
+    <a href="documents.php"><i class="bi bi-folder2-open"></i> Documents</a>
     <a href="deadlines.php"><i class="bi bi-calendar-event-fill"></i> Submission Deadlines</a>
     <a href="find_faculty.php" class="active"><i class="bi bi-people-fill"></i> Find Faculty</a>
 <a href="repository.php"><i class="bi bi-folder-symlink-fill"></i> File Repository</a>

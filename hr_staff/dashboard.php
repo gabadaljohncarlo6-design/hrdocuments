@@ -28,7 +28,7 @@ if(isset($_POST['update']))
 
     $status=mysqli_real_escape_string($conn,$_POST['status']);
 
-    $remarks=mysqli_real_escape_string($conn,$_POST['remarks']);
+    $remarks=mysqli_real_escape_string($conn,$_POST['remarks'] ?? '');
 
     mysqli_query($conn,"
     UPDATE documents
@@ -111,7 +111,8 @@ if(isset($_POST['update']))
         );
     }
 
-    header("Location: dashboard.php");
+    $go = (isset($_POST['return_to']) && $_POST['return_to']==='documents.php') ? 'documents.php' : 'dashboard.php';
+    header("Location: " . $go);
 
     exit();
 
@@ -352,6 +353,7 @@ color:#0A2E73;
         Dashboard
     </a>
 
+    <a href="documents.php"><i class="bi bi-folder2-open"></i> Documents</a>
     <a href="deadlines.php">
         <i class="bi bi-calendar-event-fill"></i>
         Submission Deadlines
