@@ -63,13 +63,6 @@
         </li>
 
         <li>
-            <a href="../admin/activity_logs.php">
-                <i class="bi bi-clock-history"></i>
-                <span>Activity Logs</span>
-            </a>
-        </li>
-
-        <li>
             <a href="../admin/reports.php">
                 <i class="bi bi-bar-chart-fill"></i>
                 <span>Reports and Analytics</span>
@@ -80,13 +73,6 @@
             <a href="../admin/storage_analytics.php">
                 <i class="bi bi-hdd-fill"></i>
                 <span>Storage Analytics</span>
-            </a>
-        </li>
-
-        <li>
-            <a href="print_report.php" target="_blank">
-                <i class="bi bi-printer-fill"></i>
-                <span>Print Report</span>
             </a>
         </li>
 
@@ -105,27 +91,6 @@
         </li>
 
         <li>
-            <a href="backup_database.php">
-                <i class="bi bi-database-fill-down"></i>
-                <span>Backup Database</span>
-            </a>
-        </li>
-
-        <li>
-            <a href="system_logs.php">
-                <i class="bi bi-journal-text"></i>
-                <span>System Logs</span>
-            </a>
-        </li>
-
-        <li>
-            <a href="database_status.php">
-                <i class="bi bi-server"></i>
-                <span>Database Status</span>
-            </a>
-        </li>
-
-        <li>
             <a href="system_information.php">
                 <i class="bi bi-info-circle-fill"></i>
                 <span>System Information</span>
@@ -133,30 +98,9 @@
         </li>
 
         <li>
-            <a href="about.php">
-                <i class="bi bi-info-square-fill"></i>
-                <span>About System</span>
-            </a>
-        </li>
-
-        <li>
-            <a href="notifications.php">
-                <i class="bi bi-bell-fill"></i>
-                <span>Notifications</span>
-            </a>
-        </li>
-
-        <li>
             <a href="announcement.php">
                 <i class="bi bi-megaphone-fill"></i>
                 <span>Announcements</span>
-            </a>
-        </li>
-
-        <li>
-            <a href="archive_documents.php">
-                <i class="bi bi-archive-fill"></i>
-                <span>Archived Documents</span>
             </a>
         </li>
 

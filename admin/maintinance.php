@@ -51,16 +51,6 @@ Restore Database
 Database Status
 </a>
 
-<a href="system_logs.php" class="btn btn-dark m-2">
-<i class="bi bi-journal-text"></i>
-System Logs
-</a>
-
-<a href="system_information.php" class="btn btn-info text-white m-2">
-<i class="bi bi-info-circle-fill"></i>
-System Information
-</a>
-
 </div>
 
 </div>
