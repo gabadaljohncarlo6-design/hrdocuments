@@ -48,7 +48,6 @@ body{background:#eef3fb;}
     <a href="dashboard.php"><i class="bi bi-speedometer2"></i> Dashboard</a>
     <a href="upload.php"><i class="bi bi-cloud-upload-fill"></i> Upload Document</a>
     <a href="my_documents.php"><i class="bi bi-folder2-open"></i> My Documents</a>
-    <a href="notifications.php"><i class="bi bi-bell-fill"></i> Notifications</a>
     <a href="templates.php" class="active"><i class="bi bi-file-earmark-arrow-down-fill"></i> Template</a>
     <a href="profile.php"><i class="bi bi-person-circle"></i> My Profile</a>
     <a href="../logout.php" onclick="return confirm('Are you sure you want to log out?')"><i class="bi bi-box-arrow-right"></i> Logout</a>

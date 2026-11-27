@@ -236,11 +236,6 @@ Upload Document
 My Documents
 </a>
 
-<a href="notifications.php">
-<i class="bi bi-bell-fill"></i>
-Notifications
-</a>
-
 <a href="profile.php">
 <i class="bi bi-person-circle"></i>
 My Profile
