@@ -68,6 +68,7 @@ body{background:#eef3fb;}
 $search   = trim($_GET['search'] ?? '');
 $category = (int)($_GET['category'] ?? 0);
 $fstatus  = $_GET['status'] ?? '';
+$fdate    = $_GET['date'] ?? '';
 
 $where = "WHERE (documents.is_archived IS NULL OR documents.is_archived = 0)";
 if ($search !== '') {
@@ -78,6 +79,14 @@ if ($category) { $where .= " AND documents.category_id=$category"; }
 if (in_array($fstatus, ['Pending','Approved','Rejected','Returned'], true)) {
     $where .= " AND documents.status='" . mysqli_real_escape_string($conn, $fstatus) . "'";
 }
+
+$dateSql = [
+    'today' => "DATE(documents.submitted_at) = CURDATE()",
+    'week'  => "YEARWEEK(documents.submitted_at, 1) = YEARWEEK(CURDATE(), 1)",
+    'month' => "YEAR(documents.submitted_at) = YEAR(CURDATE()) AND MONTH(documents.submitted_at) = MONTH(CURDATE())",
+    'year'  => "YEAR(documents.submitted_at) = YEAR(CURDATE())",
+];
+if (isset($dateSql[$fdate])) { $where .= " AND (" . $dateSql[$fdate] . ")"; }
 
 $cats = mysqli_query($conn, "SELECT * FROM document_categories ORDER BY category_name ASC");
 $query = mysqli_query($conn, "
@@ -92,10 +101,10 @@ $query = mysqli_query($conn, "
 
 <div class="box mb-3">
     <form method="GET" class="row g-2">
-        <div class="col-lg-4">
+        <div class="col-lg-3">
             <input type="text" name="search" class="form-control" placeholder="Search faculty or document..." value="<?php echo htmlspecialchars($search); ?>">
         </div>
-        <div class="col-lg-3">
+        <div class="col-lg-2">
             <select name="category" class="form-select">
                 <option value="">All Categories</option>
                 <?php while ($cat = mysqli_fetch_assoc($cats)): ?>
@@ -103,7 +112,7 @@ $query = mysqli_query($conn, "
                 <?php endwhile; ?>
             </select>
         </div>
-        <div class="col-lg-3">
+        <div class="col-lg-2">
             <select name="status" class="form-select">
                 <option value="">All Status</option>
                 <?php foreach (['Pending','Approved','Rejected','Returned'] as $o): ?>
@@ -111,8 +120,16 @@ $query = mysqli_query($conn, "
                 <?php endforeach; ?>
             </select>
         </div>
-        <div class="col-lg-2 d-grid">
-            <button class="btn btn-primary"><i class="bi bi-search"></i> Search</button>
+        <div class="col-lg-2">
+            <select name="date" class="form-select">
+                <option value="">All Dates</option>
+                <?php foreach (['today'=>'Today','week'=>'This Week','month'=>'This Month','year'=>'This Year'] as $k=>$lbl): ?>
+                <option value="<?php echo $k; ?>" <?php if ($fdate === $k) echo 'selected'; ?>><?php echo $lbl; ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        <div class="col-lg-1 d-grid">
+            <button class="btn btn-primary"><i class="bi bi-search"></i></button>
         </div>
     </form>
 </div>
@@ -124,10 +141,12 @@ $query = mysqli_query($conn, "
         <thead class="table-light">
             <tr>
                 <th>Faculty</th>
-                <th>Document</th>
+                <th>Title</th>
                 <th>Category</th>
                 <th>Status</th>
-                <th>Date</th>
+                <th>Remarks</th>
+                <th>Submitted Date</th>
+                <th>Feedback</th>
                 <th width="120">Actions</th>
             </tr>
         </thead>
@@ -149,14 +168,20 @@ $query = mysqli_query($conn, "
                         <?php endforeach; ?>
                     </select>
                 </td>
+                <td style="min-width:200px;">
+                    <input type="text" name="remarks" form="f<?php echo (int)$row['document_id']; ?>" class="form-control form-control-sm" placeholder="Type remarks, press Enter" value="<?php echo htmlspecialchars($row['hr_remarks'] ?? ''); ?>" onchange="this.form.submit()">
+                </td>
                 <td><?php echo date("M d, Y", strtotime($row['submitted_at'])); ?></td>
+                <td>
+                    <a href="send_file.php?id=<?php echo (int)$row['document_id']; ?>" class="btn btn-sm btn-warning" title="Send corrected file to faculty"><i class="bi bi-send-fill"></i> Send File</a>
+                </td>
                 <td>
                     <a href="<?php echo htmlspecialchars($row['file_path']); ?>" target="_blank" class="btn btn-sm btn-primary" title="View file"><i class="bi bi-eye-fill"></i></a>
                     <a href="faculty_profile.php?id=<?php echo (int)$row['user_id']; ?>" class="btn btn-sm btn-info text-white" title="Faculty profile"><i class="bi bi-person-fill"></i></a>
                 </td>
             </tr>
         <?php endwhile; else: ?>
-            <tr><td colspan="6" class="text-center text-muted py-4">No documents found.</td></tr>
+            <tr><td colspan="8" class="text-center text-muted py-4">No documents found.</td></tr>
         <?php endif; ?>
         </tbody>
     </table>

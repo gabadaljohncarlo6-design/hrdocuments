@@ -496,133 +496,9 @@ if (mysqli_num_rows($announcements) === 0) {
 
 <h4 class="fw-bold text-primary mb-0">
 
-Submitted Documents
+Recent Submitted Documents
 
 </h4>
-
-<div class="d-flex gap-2 flex-wrap">
-
-<input
-type="text"
-id="searchInput"
-class="form-control"
-style="width:240px;"
-placeholder="Search Employee / Title">
-
-<select
-id="categoryFilter"
-class="form-select"
-style="width:180px;">
-
-<option value="">
-
-All Categories
-
-</option>
-
-<?php
-
-$catQuery=mysqli_query($conn,"
-SELECT category_name
-FROM document_categories
-ORDER BY category_name
-");
-
-while($cat=mysqli_fetch_assoc($catQuery))
-{
-
-?>
-
-<option
-value="<?php echo $cat['category_name']; ?>">
-
-<?php echo $cat['category_name']; ?>
-
-</option>
-
-<?php
-
-}
-
-?>
-
-</select>
-
-<select
-id="statusFilter"
-class="form-select"
-style="width:170px;">
-
-<option value="">
-
-All Status
-
-</option>
-
-<option value="Pending">
-
-Pending
-
-</option>
-
-<option value="Approved">
-
-Approved
-
-</option>
-
-<option value="Rejected">
-
-Rejected
-
-</option>
-
-<option value="Returned">
-
-Returned
-
-</option>
-
-</select>
-
-<select
-id="dateFilter"
-class="form-select"
-style="width:170px;">
-
-<option value="">
-
-All Dates
-
-</option>
-
-<option value="today">
-
-Today
-
-</option>
-
-<option value="week">
-
-This Week
-
-</option>
-
-<option value="month">
-
-This Month
-
-</option>
-
-<option value="year">
-
-This Year
-
-</option>
-
-</select>
-
-</div>
 
 </div>
 
@@ -635,8 +511,6 @@ id="documentsTable">
 <thead class="table-light">
 
 <tr>
-
-<th>ID</th>
 
 <th>Employee</th>
 
@@ -683,7 +557,9 @@ LEFT JOIN document_categories
 
 ON document_categories.category_id=documents.category_id
 
-ORDER BY documents.document_id DESC
+ORDER BY documents.submitted_at DESC, documents.document_id DESC
+
+LIMIT 10
 
 ");
 
@@ -692,8 +568,6 @@ while($row=mysqli_fetch_assoc($query))
 
 ?>
 <tr>
-
-<td><?php echo $row['document_id']; ?></td>
 
 <td>
 <?php echo $row['first_name']." ".$row['last_name']; ?>
@@ -724,22 +598,14 @@ View
 
 </a>
 
-<a href="send_file.php?id=<?php echo (int)$row['document_id']; ?>" class="btn btn-warning btn-sm mt-1" title="Send corrected file to faculty"><i class="bi bi-send-fill"></i> Send File</a>
 
 </td>
 <td>
 <?php
 $st=$row['status'];
+$badge=['Pending'=>'warning text-dark','Approved'=>'success','Rejected'=>'danger','Returned'=>'info text-dark'][$st] ?? 'secondary';
 ?>
-<form id="f<?php echo (int)$row['document_id']; ?>" method="POST" style="display:none">
-<input type="hidden" name="document_id" value="<?php echo (int)$row['document_id']; ?>">
-<input type="hidden" name="update" value="1">
-</form>
-<select name="status" form="f<?php echo (int)$row['document_id']; ?>" class="form-select form-select-sm status-select" onchange="this.form.submit()">
-<?php foreach(["Pending","Approved","Rejected","Returned"] as $opt){ ?>
-<option value="<?php echo $opt; ?>" <?php if($st==$opt) echo "selected"; ?>><?php echo $opt; ?></option>
-<?php } ?>
-</select>
+<span class="badge bg-<?php echo $badge; ?>"><?php echo htmlspecialchars($st); ?></span>
 </td>
 
 <td>
@@ -747,7 +613,11 @@ $st=$row['status'];
 </td>
 
 <td>
-<input type="text" name="remarks" form="f<?php echo (int)$row['document_id']; ?>" class="form-control form-control-sm" placeholder="Type remarks, press Enter" value="<?php echo htmlspecialchars($row['hr_remarks']); ?>" onchange="this.form.submit()">
+<?php
+echo !empty($row['hr_remarks'])
+    ? nl2br(htmlspecialchars($row['hr_remarks']))
+    : "<span class='text-muted'>No remarks</span>";
+?>
 </td>
 
 </tr>
@@ -768,109 +638,9 @@ $st=$row['status'];
 
 <script>
 
-const searchInput=document.getElementById("searchInput");
-const categoryFilter=document.getElementById("categoryFilter");
-const statusFilter=document.getElementById("statusFilter");
-const dateFilter=document.getElementById("dateFilter");
-
-function filterTable(){
-
-let search=searchInput.value.toLowerCase();
-let category=categoryFilter.value.toLowerCase();
-let status=statusFilter.value.toLowerCase();
-let date=dateFilter.value;
-
-let today=new Date();
-
-document.querySelectorAll("#documentsTable tbody tr").forEach(function(row){
-
-let employee=row.cells[1].innerText.toLowerCase();
-let categoryText=row.cells[2].innerText.toLowerCase();
-let title=row.cells[3].innerText.toLowerCase();
-
-let statusText=row.cells[6]
-.querySelector("select")
-.value
-.toLowerCase();
-
-let submitted=new Date(row.cells[7].innerText);
-
-let matchSearch=
-employee.includes(search)||
-title.includes(search)||
-categoryText.includes(search);
-
-let matchCategory=
-category===""||
-categoryText===category;
-
-let matchStatus=
-status===""||
-statusText===status;
-
-let matchDate=true;
-
-if(date==="today")
-{
-
-matchDate=submitted.toDateString()===today.toDateString();
-
-}
-
-if(date==="week")
-{
-
-let weekAgo=new Date();
-
-weekAgo.setDate(today.getDate()-7);
-
-matchDate=submitted>=weekAgo;
-
-}
-
-if(date==="month")
-{
-
-matchDate=
-submitted.getMonth()===today.getMonth()&&
-submitted.getFullYear()===today.getFullYear();
-
-}
-
-if(date==="year")
-{
-
-matchDate=
-submitted.getFullYear()===today.getFullYear();
-
-}
-
-row.style.display=
-
-(matchSearch&&matchCategory&&matchStatus&&matchDate)
-
-?
-
-""
-
-:
-
-"none";
-
-});
-
-}
-
-searchInput.addEventListener("keyup",filterTable);
-categoryFilter.addEventListener("change",filterTable);
-statusFilter.addEventListener("change",filterTable);
-
 function statFilter(v){
-    statusFilter.value=v;
-    filterTable();
-    statusFilter.scrollIntoView({behavior:"smooth",block:"center"});
+    window.location.href = "documents.php" + (v ? "?status=" + encodeURIComponent(v) : "");
 }
-dateFilter.addEventListener("change",filterTable);
 
 </script>
 
